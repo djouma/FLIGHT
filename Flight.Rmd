@@ -1,0 +1,91 @@
+---
+title: "FLIGHT"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(readr)
+library(readxl)
+library(dbx)
+
+setwd("C:/Users/KONLAMBIGUE DJOUMA/Documents/Aeroport/data")
+```
+Chargement des tables R 
+```{r}
+
+
+load('planes.rda') 
+load('airlines.rda') 
+load('airports.rda')
+load('weather.rda') 
+load('flights.rda')
+```
+Ensuite nous avons exporter les tables au format csv, en utilisant la fonction write.csv 
+
+```{r}
+write.csv(planes,file="C:/Users/KONLAMBIGUE DJOUMA/Documents/Aeroport/Fichiers csv/planes.csv",na="NULL",row.names = FALSE)
+write.csv(airlines,file="C:/Users/KONLAMBIGUE DJOUMA/Documents/Aeroport/Fichiers csv/airlines.csv",na="NULL",row.names = FALSE)
+write.csv(airports,file="C:/Users/KONLAMBIGUE DJOUMA/Documents/Aeroport/Fichiers csv/airports.csv",na="NULL",row.names = FALSE)
+write.csv(weather,file="C:/Users/KONLAMBIGUE DJOUMA/Documents/Aeroport/Fichiers csv/weather.csv",na="NULL",row.names = FALSE)
+write.csv(flights,file="C:/Users/KONLAMBIGUE DJOUMA/Documents/Aeroport/Fichiers csv/flights.csv",na="NULL",row.names = FALSE)
+
+# planess <- read_csv(file="C:/Users/KONLAMBIGUE DJOUMA/Documents/Aeroport/Fichiers csv/planes.csv")
+# airliness <- read_csv(file="C:/Users/KONLAMBIGUE DJOUMA/Documents/Aeroport/Fichiers csv/airlines.csv")
+# airportss <- read_csv(file="C:/Users/KONLAMBIGUE DJOUMA/Documents/Aeroport/Fichiers csv/airports.csv")
+# weathers <- read_csv(file="C:/Users/KONLAMBIGUE DJOUMA/Documents/Aeroport/Fichiers csv/weather.csv")
+# flightss <- read_csv(file="C:/Users/KONLAMBIGUE DJOUMA/Documents/Aeroport/Fichiers csv/flights.csv")
+```
+Connexion
+
+```{r}
+con <-dbConnect(RMySQL::MySQL(),
+                dbname ="eNv2xS5VrD",
+                host = "remotemysql.com",
+                port =3306,
+                user = "eNv2xS5VrD",
+                password = "AGLdP9n0Qk"
+)
+```
+Renomé une colonne de la table weather et flight
+
+```{r}
+names(weather)[2]<-"ANNEE"
+names(flights)[1]<-"ANNEE"
+#inserer les données dans la base mysql
+
+dbxInsert(con, "PLANES",planes)
+dbxInsert(con, "AIRLINES",airlines)
+dbxInsert(con, "AIRPORTS",airports)
+dbxInsert(con, "WEATHER",weather)
+dbxInsert(con, "FLIGHTS",flights)
+```
+Reporting 
+
+```{r}
+## Reporting 
+
+# Tout d'abord, on commence par importer les package dont nous avons besoins.
+# 
+# - Le package readr sera utiliser pour l'import des fichiers csV.
+# - La package dplyr pour manipuler les dataframe
+# - La librairie lubridate pour la gestion des dates.
+# - La librairie tudyverse pour 
+library(lubridate)
+library(tidyverse)
+library(readr)
+library(dplyr)
+```
+Question 1) 
+
+Créer d'une fonction pour calculer la date. Pour cela on utilise la fonction make_datatime du package lubridate
+```{r}
+
+cree_date_time <- function(year, month, day, time) {
+  make_datetime(year, month, day, time %/% 100, time %% 100) }
+  
+```
+
